@@ -22,7 +22,8 @@
     <!-- Canonical URL - IMPORTANT FOR SEO -->
     <link rel="canonical" href="https://takalliance.com">
     
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         * {
@@ -62,12 +63,47 @@
 
         /* Bengali Font */
         .bn {
-            font-family: 'Hind Siliguri', 'Poppins', sans-serif;
+            font-family: 'Noto Sans Bengali', 'Poppins', sans-serif;
         }
 
-        /* Language Toggle */
-        [lang="bn"] .en-only { display: none !important; }
-        [lang="en"] .bn-only { display: none !important; }
+        [lang="bn"] body {
+            font-family: 'Noto Sans Bengali', 'Poppins', sans-serif;
+        }
+
+        /* Language Toggle - Works with both html and body lang attribute */
+        [lang="bn"] .en-only,
+        body[lang="bn"] .en-only { display: none !important; }
+        [lang="en"] .bn-only,
+        body[lang="en"] .bn-only { display: none !important; }
+        
+        /* Show Bengali content when Bengali is selected */
+        [lang="bn"] .bn-only,
+        body[lang="bn"] .bn-only { display: inline !important; }
+        [lang="en"] .en-only,
+        body[lang="en"] .en-only { display: inline !important; }
+        
+        /* Block level elements */
+        [lang="bn"] p.bn-only,
+        body[lang="bn"] p.bn-only,
+        [lang="bn"] h1.bn-only,
+        body[lang="bn"] h1.bn-only,
+        [lang="bn"] h2.bn-only,
+        body[lang="bn"] h2.bn-only,
+        [lang="bn"] h3.bn-only,
+        body[lang="bn"] h3.bn-only,
+        [lang="bn"] div.bn-only,
+        body[lang="bn"] div.bn-only { display: block !important; }
+        
+        [lang="en"] p.en-only,
+        body[lang="en"] p.en-only,
+        [lang="en"] h1.en-only,
+        body[lang="en"] h1.en-only,
+        [lang="en"] h2.en-only,
+        body[lang="en"] h2.en-only,
+        [lang="en"] h3.en-only,
+        body[lang="en"] h3.en-only,
+        [lang="en"] div.en-only,
+        body[lang="en"] div.en-only { display: block !important; }
 
         /* Animated Background */
         .bg-animation {
@@ -1172,6 +1208,9 @@
     </style>
 </head>
 <body lang="en">
+    <!-- Preload Bengali text to prevent loading issues -->
+    <div style="position:absolute;opacity:0;pointer-events:none;font-family:'Noto Sans Bengali'">বাংলা</div>
+    
     <div class="bg-animation"></div>
     <div class="particles">
         <div class="particle"></div>
@@ -1707,28 +1746,37 @@
     <!-- Language Switcher Script -->
     <script>
         function setLang(lang) {
+            // Set language on html and body
+            document.documentElement.setAttribute('lang', lang);
             document.body.setAttribute('lang', lang);
             
             // Update button states
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
+            const buttons = document.querySelectorAll('.lang-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
             
             if (lang === 'en') {
-                document.querySelector('.lang-btn:first-child').classList.add('active');
+                buttons[0].classList.add('active');
             } else {
-                document.querySelector('.lang-btn:last-child').classList.add('active');
+                buttons[1].classList.add('active');
             }
             
             // Save preference
             localStorage.setItem('takalliance-lang', lang);
+            
+            console.log('Language set to: ' + lang);
         }
         
-        // Load saved language preference
+        // Load saved language preference on page load
         document.addEventListener('DOMContentLoaded', function() {
             const savedLang = localStorage.getItem('takalliance-lang') || 'en';
             setLang(savedLang);
         });
+        
+        // Also set default on load
+        window.onload = function() {
+            const savedLang = localStorage.getItem('takalliance-lang') || 'en';
+            setLang(savedLang);
+        };
     </script>
 </body>
 </html>
